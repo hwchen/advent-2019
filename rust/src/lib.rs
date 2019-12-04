@@ -1,5 +1,31 @@
-pub fn run_intcode(program: Vec<u64>) -> Vec<u64> {
-    let mut program = program;
+pub struct IntCode {
+    program: Vec<u64>,
+}
+
+impl IntCode {
+    pub fn new(program: Vec<u64>) -> Self {
+        Self { program }
+    }
+
+    pub fn run(&self, input_1: u64, input_2: u64) -> u64 {
+        let mut program = self.program.clone();
+        program[1] = input_1;
+        program[2] = input_2;
+        run_intcode(&mut program);
+
+        program[0]
+    }
+
+    pub fn run_inplace(&mut self, input_1: u64, input_2: u64) -> u64 {
+        self.program[1] = input_1;
+        self.program[2] = input_2;
+        run_intcode(&mut self.program);
+
+        self.program[0]
+    }
+}
+
+fn run_intcode(program: &mut [u64]) {
     let mut cursor = 0;
 
     while let Some(opcode) = program.get(cursor) {
@@ -20,8 +46,6 @@ pub fn run_intcode(program: Vec<u64>) -> Vec<u64> {
             _ => panic!("logic error"),
         }
     }
-
-    program
 }
 
 #[cfg(test)]
